@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import ndvi_generator
+import visualizations
 
 if(__name__ == "__main__"):
     # Get the NDVI image from Sentinel 2017
