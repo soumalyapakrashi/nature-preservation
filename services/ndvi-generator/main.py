@@ -27,8 +27,6 @@ if(__name__ == "__main__"):
                 healthy2020 += 1
 
     # Calculate the change in the two
-    ndvi2017 = ndvi2017 + 1
-    ndvi2020 = ndvi2020 + 1
     change_ndvi = ndvi2020 - ndvi2017
 
     # Calculate the change in forest cover (NDVI)
