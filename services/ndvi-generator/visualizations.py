@@ -18,7 +18,7 @@ def visualizeRGB(band_red_image, band_green_image, band_blue_image) -> None:
 # Function to visualize the NDVI image calculated.
 # Input is a numpy array of the NDVI image (values ranging between -1 and 1).
 # Output will be a JPG file.
-def visualizeNDVI(ndvi_image: np.ndarray, name: str = "ndvi.jpg") -> None:
+def visualizeNDVI(ndvi_image: np.ndarray, filename: str = "ndvi.jpg") -> None:
     pass
 
 
@@ -26,7 +26,7 @@ def visualizeNDVI(ndvi_image: np.ndarray, name: str = "ndvi.jpg") -> None:
 # Function to visualize the change map obtained by differencing NDVI of two years.
 # Input is a numpy array containing the change map (values ranging between -2 and 2).
 # Output will be a JPG file.
-def visualizeChangeMap(change_map: np.ndarray, name: str = "change_map.jpg") -> None:
+def visualizeChangeMap(change_map: np.ndarray, filename: str = "change_map.jpg") -> None:
     pass
 
 
