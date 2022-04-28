@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import GPUtil
 
 available_gpu_list = GPUtil.getAvailable()
@@ -43,9 +42,7 @@ def _computeOnCPU(band_red_image: np.ndarray, band_nir_image: np.ndarray) -> np.
     return ndvi_image
 
 
-def generateNDVI(band_red_path: str, band_nir_path: str) -> np.ndarray:
-    band_red_image = plt.imread(band_red_path)
-    band_nir_image = plt.imread(band_nir_path)
+def generateNDVI(band_red_image: np.ndarray, band_nir_image: np.ndarray) -> np.ndarray:
 
     if not gpu_available:
         ndvi_image = _computeOnCPU(band_red_image, band_nir_image)
