@@ -1,6 +1,23 @@
 import matplotlib.pyplot as plt
+import numpy as np
+
 import ndvi_generator
 import visualizations
+
+
+# This class stores objects to the disk.
+# This decreases the execution time of the program as intermediate calculations
+# can be saved to the disk and does not need to be recalculated at each run.
+class TempObjectStorage:
+    @staticmethod
+    def storeMatrix(matrix: np.ndarray, filename: str) -> None:
+        np.save(file = filename, arr = matrix)
+    
+    @staticmethod
+    def loadMatrix(filename: str) -> np.ndarray:
+        loaded_matrix: np.ndarray = np.load(file = filename)
+        return loaded_matrix
+
 
 if(__name__ == "__main__"):
     # Get the NDVI image from Sentinel 2017
