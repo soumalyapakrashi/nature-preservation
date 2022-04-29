@@ -2,16 +2,31 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def visualizeRGB(band_red_image, band_green_image, band_blue_image) -> None:
-    # rgb_image = np.dstack((band_red_image, band_green_image, band_blue_image))
+def visualizeRGB(band_red_image: np.ndarray, band_green_image: np.ndarray, band_blue_image: np.ndarray, filename: str = "rgb.jpg") -> None:
+    # Convert the input matrix to 32 bit float number.
+    # This is because the tonemap function only works with float32 numbers.
+    # If number is not in float32 then an assertion error will be thrown telling that type should be
+    # CV_32FC3. Here, the 32 refers to 32 bit; F refers to float; and 3 refers to 3 dimensions. This last
+    # value signifies RGB images as all RGB images have 3 dimensions (or channels).
+    band_red_image = band_red_image.astype(dtype = np.float32)
+    band_green_image = band_green_image.astype(dtype = np.float32)
+    band_blue_image = band_blue_image.astype(dtype = np.float32)
+
+    # Merge the separate layers (Red, Green and Blue) into a single image
+    # Here the orde is different because OpenCV works with BGR and not RGB
     rgb_image = cv2.merge([band_blue_image, band_green_image, band_red_image])
 
-    tonemap = cv2.createTonemapDrago(gamma = 1.0)
+    # Create the tonemap and process the merged image
+    tonemap = cv2.createTonemapReinhard(gamma = 0.5, intensity = 3.5)
     tonemapped_image = tonemap.process(rgb_image)
-    # image_8bit = np.clip(tonemapped_image * 255, 0, 255).astype('uint8')
-    # cv2.imshow("RGB", image_8bit)
-    # cv2.waitKey(0)
-    cv2.imwrite("tonemapped.jpg", tonemapped_image)
+
+    # The tonemapping process converts the image to the range 0 - 1.
+    # So we multiply this with 255 so that the range becomes 0 - 255.
+    tonemapped_image = tonemapped_image * 255
+
+    # The image is still in float32 form here, but the export function most probably manages that
+    # and automatically converts it into uint8 before exporting.
+    cv2.imwrite(filename, tonemapped_image)
 
 
 
@@ -37,6 +52,8 @@ if(__name__ == "__main__"):
     # band_green_image = plt.imread("C:/Users/User/Downloads/L1C_T43REL_A008396_20170130T053159/S2A_MSIL1C_20170130T053041_N0204_R105_T43REL_20170130T053159.SAFE/GRANULE/L1C_T43REL_A008396_20170130T053159/IMG_DATA/T43REL_20170130T053041_B03.jp2")
 
     # band_blue_image = plt.imread("C:/Users/User/Downloads/L1C_T43REL_A008396_20170130T053159/S2A_MSIL1C_20170130T053041_N0204_R105_T43REL_20170130T053159.SAFE/GRANULE/L1C_T43REL_A008396_20170130T053159/IMG_DATA/T43REL_20170130T053041_B02.jp2")
+
+    # plt.imsave("./band.jpg", band_red_image)
 
     # visualizeRGB(band_red_image, band_green_image, band_blue_image)
 
