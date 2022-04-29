@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2
 
 import ndvi_generator
 import visualizations
@@ -25,8 +26,9 @@ if(__name__ == "__main__"):
 
     band_nir_path = "C:/Users/User/Downloads/L1C_T43REL_A008396_20170130T053159/S2A_MSIL1C_20170130T053041_N0204_R105_T43REL_20170130T053159.SAFE/GRANULE/L1C_T43REL_A008396_20170130T053159/IMG_DATA/T43REL_20170130T053041_B08.jp2"
     
-    band_red_image_2017 = plt.imread(band_red_path)
-    band_nir_image_2017 = plt.imread(band_nir_path)
+    band_red_image_2017 = cv2.imread(band_red_path, cv2.IMREAD_GRAYSCALE)
+    band_nir_image_2017 = cv2.imread(band_nir_path, cv2.IMREAD_GRAYSCALE)
+
     ndvi2017 = ndvi_generator.generateNDVI(band_red_image_2017, band_nir_image_2017)
 
     # Get the NDVI image from 2020
@@ -34,8 +36,8 @@ if(__name__ == "__main__"):
 
     band_nir_path = "C:/Users/User/Downloads/L1C_T43REL_A015146_20200130T053806/S2B_MSIL1C_20200130T053049_N0208_R105_T43REL_20200130T090639.SAFE/GRANULE/L1C_T43REL_A015146_20200130T053806/IMG_DATA/T43REL_20200130T053049_B08.jp2"
 
-    band_red_image_2020 = plt.imread(band_red_path)
-    band_nir_image_2020 = plt.imread(band_nir_path)
+    band_red_image_2020 = cv2.imread(band_red_path, cv2.IMREAD_GRAYSCALE)
+    band_nir_image_2020 = cv2.imread(band_nir_path, cv2.IMREAD_GRAYSCALE)
 
     ndvi2020 = ndvi_generator.generateNDVI(band_red_image_2020, band_nir_image_2020)
 
