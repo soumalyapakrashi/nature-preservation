@@ -34,7 +34,7 @@ def _computeOnCPU(band_red_image: np.ndarray, band_nir_image: np.ndarray) -> np.
     for row in range(ndvi_image.shape[0]):
         for column in range(ndvi_image.shape[1]):
             if(np.isnan(ndvi_image[row][column])):
-                ndvi_image[row][column] = 0.0
+                ndvi_image[row][column] = -1.0
     
     # print(ndvi_image.max())
     # print(ndvi_image.min())
