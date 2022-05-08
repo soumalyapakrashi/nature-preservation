@@ -3,9 +3,14 @@ import numpy as np
 import cupy as cp
 import cv2
 import GPUtil
+from dotenv import load_dotenv
+import os
+import mariadb
 
 import ndvi_generator
 import visualizations
+
+load_dotenv()
 
 # Check whether GPU is available and set flag accordingly
 available_gpu_list = GPUtil.getAvailable()
@@ -31,12 +36,56 @@ class TempObjectStorage:
 
 
 if(__name__ == "__main__"):
-    # Get the NDVI image from Sentinel 2017
-    band_red_path = "D:/Programs/nature-preservation/storage/Siliguri/S2A_MSIL1C_20170115T044121_N0204_R033_T45RXK_20170115T044124.SAFE/GRANULE/L1C_T45RXK_A008181_20170115T044124/IMG_DATA/T45RXK_20170115T044121_B04.jp2"
-
-    band_nir_path = "D:/Programs/nature-preservation/storage/Siliguri/S2A_MSIL1C_20170115T044121_N0204_R033_T45RXK_20170115T044124.SAFE/GRANULE/L1C_T45RXK_A008181_20170115T044124/IMG_DATA/T45RXK_20170115T044121_B08.jp2"
+    # Connect to database
+    try:
+        connection = mariadb.connect(
+            user = os.environ.get("MYSQL_USER"),
+            password = os.environ.get("MYSQL_PASSWORD"),
+            host = os.environ.get("MYSQL_HOST"),
+            port = int(os.environ.get("MYSQL_PORT")),
+            database = os.environ.get("MYSQL_DATABASE")
+        )
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        exit(1)
     
-    band_red_image = cv2.imread(band_red_path, cv2.IMREAD_GRAYSCALE)
-    band_nir_image = cv2.imread(band_nir_path, cv2.IMREAD_GRAYSCALE)
+    # Get the cursor to the database
+    cursor = connection.cursor()
+    
+    # Get the images which have not been processed
+    cursor.execute("SELECT id, area_id, year, sat_data_path FROM STORED_DATA_INFO WHERE ndvi_generated = 0")
 
-    ndvi = ndvi_generator.generateNDVI(band_red_image, band_nir_image)
+    # Iterate over each tuple
+    for (id, area_id, year, sat_data_path) in cursor:
+        # Generate the path to the image files
+        temp_path = os.path.join(
+            sat_data_path,
+            "GRANULE"
+        )
+
+        final_path = os.path.join(
+            temp_path,
+            os.listdir(temp_path)[0],
+            "IMG_DATA"
+        )
+
+        # List all the image files in the required directory
+        image_files = os.listdir(final_path)
+
+        # Iterate over all the image files and choose only bands 4 and 8.
+        # Load the chosen images using OpenCV.
+        for image_file in image_files:
+            if(image_file.endswith("B04.jp2")):
+                band_red_image = cv2.imread(os.path.join(final_path, image_file), cv2.IMREAD_GRAYSCALE)
+
+            elif(image_file.endswith("B08.jp2")):
+                band_nir_image = cv2.imread(os.path.join(final_path, image_file), cv2.IMREAD_GRAYSCALE)
+
+        # Generate the NDVI matrix.
+        # This ndvi variable will be a np.ndarray if no GPU is available.
+        # But if GPU is available, then it will be cp.ndarray.
+        ndvi = ndvi_generator.generateNDVI(band_red_image, band_nir_image)
+
+        if(gpu_available == True):
+            del ndvi
+            cp.get_default_memory_pool().free_all_blocks()
