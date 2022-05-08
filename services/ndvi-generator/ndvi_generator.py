@@ -7,7 +7,7 @@ if(len(available_gpu_list) == 0):
 else:
     gpu_available: bool = True
 
-gpu_available = False
+# gpu_available = False
 
 if not gpu_available:
     import numpy as np
@@ -18,10 +18,15 @@ else:
 
 
 def _computeOnGPU(band_red_image: np.ndarray, band_nir_image: np.ndarray):
-    # band_red_image = cp.array(band_red_image, dtype = cp.int32)
-    # band_nir_image = cp.array(band_nir_image, dtype = cp.int32)
+    band_red_image = cp.array(band_red_image, dtype = cp.int32)
+    band_nir_image = cp.array(band_nir_image, dtype = cp.int32)
 
-    pass
+    ndvi_image = (band_nir_image - band_red_image) / (band_nir_image + band_red_image)
+
+    # Substitute the NaN values
+    cp.nan_to_num(ndvi_image, copy = False, nan = -1.0)
+
+    return ndvi_image
 
 
 def _computeOnCPU(band_red_image: np.ndarray, band_nir_image: np.ndarray) -> np.ndarray:
@@ -35,9 +40,6 @@ def _computeOnCPU(band_red_image: np.ndarray, band_nir_image: np.ndarray) -> np.
         for column in range(ndvi_image.shape[1]):
             if(np.isnan(ndvi_image[row][column])):
                 ndvi_image[row][column] = -1.0
-    
-    # print(ndvi_image.max())
-    # print(ndvi_image.min())
 
     return ndvi_image
 
@@ -46,5 +48,7 @@ def generateNDVI(band_red_image: np.ndarray, band_nir_image: np.ndarray) -> np.n
 
     if not gpu_available:
         ndvi_image = _computeOnCPU(band_red_image, band_nir_image)
+    else:
+        ndvi_image = _computeOnGPU(band_red_image, band_nir_image)
 
     return ndvi_image
