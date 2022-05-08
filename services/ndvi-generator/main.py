@@ -43,7 +43,7 @@ if(__name__ == "__main__"):
 
     # Calculate some statistics for the images
     if(gpu_available == False):
-        print(f"Min of NDVI 2017: {ndvi2017.mean()}")
+        print(f"Min of NDVI 2017: {ndvi2017.min()}")
         print(f"Max of NDVI 2017: {ndvi2017.max()}")
         print(f"Mean of NDVI 2017: {ndvi2017.mean()}")
 
@@ -52,8 +52,7 @@ if(__name__ == "__main__"):
         print(f"Max of NDVI 2017: {cp.max(ndvi2017)}")
         print(f"Mean of NDVI 2017: {cp.mean(ndvi2017)}")
 
-        ndvi2017_cpu = cp.asnumpy(ndvi2017)
-        del ndvi2017
+        ndvi2017 = cp.asnumpy(ndvi2017)
         cp.get_default_memory_pool().free_all_blocks()
 
     # Get the NDVI image from 2022
@@ -68,7 +67,7 @@ if(__name__ == "__main__"):
 
     # Calculate some statistics for the images
     if(gpu_available == False):
-        print(f"Min of NDVI 2022: {ndvi2022.mean()}")
+        print(f"\nMin of NDVI 2022: {ndvi2022.min()}")
         print(f"Max of NDVI 2022: {ndvi2022.max()}")
         print(f"Mean of NDVI 2022: {ndvi2022.mean()}")
 
@@ -77,9 +76,8 @@ if(__name__ == "__main__"):
         print(f"Max of NDVI 2022: {cp.max(ndvi2022)}")
         print(f"Mean of NDVI 2022: {cp.mean(ndvi2022)}")
 
-        ndvi2022_cpu = cp.asnumpy(ndvi2022)
-        del ndvi2022
+        ndvi2022 = cp.asnumpy(ndvi2022)
         cp.get_default_memory_pool().free_all_blocks()
     
     # Calculate the change in the two
-    change_ndvi = ndvi2022_cpu - ndvi2017_cpu
+    change_ndvi = ndvi2022 - ndvi2017
