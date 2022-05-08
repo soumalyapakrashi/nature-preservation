@@ -24,10 +24,11 @@ else:
 # This class stores objects to the disk.
 # This decreases the execution time of the program as intermediate calculations
 # can be saved to the disk and does not need to be recalculated at each run.
-class TempObjectStorage:
+class ObjectStorage:
     @staticmethod
-    def storeMatrix(matrix: np.ndarray, filename: str) -> None:
-        np.save(file = filename, arr = matrix)
+    def storeMatrix(matrix: np.ndarray, path: str, filename: str) -> None:
+        os.makedirs(path, exist_ok = True)
+        np.save(file = os.path.join(path, filename), arr = matrix, allow_pickle = False)
     
     @staticmethod
     def loadMatrix(filename: str) -> np.ndarray:
@@ -53,7 +54,10 @@ if(__name__ == "__main__"):
     cursor = connection.cursor()
     
     # Get the images which have not been processed
-    cursor.execute("SELECT id, area_id, year, sat_data_path FROM STORED_DATA_INFO WHERE ndvi_generated = 0")
+    cursor.execute("SELECT id, area_id, year, sat_data_path FROM STORED_DATA_INFO WHERE ndvi_generated = ?", (0,))
+
+    # This will contain the information about every image calculated so that database can be updated accordingly
+    database_update = []
 
     # Iterate over each tuple
     for (id, area_id, year, sat_data_path) in cursor:
@@ -86,6 +90,36 @@ if(__name__ == "__main__"):
         # But if GPU is available, then it will be cp.ndarray.
         ndvi = ndvi_generator.generateNDVI(band_red_image, band_nir_image)
 
+        # If executing on GPU, bring the matrix to CPU memory and free GPU memory
         if(gpu_available == True):
-            del ndvi
+            ndvi = cp.asnumpy(ndvi)
             cp.get_default_memory_pool().free_all_blocks()
+        
+        # Store the NDVI matrix to object storage
+        save_path = os.path.join(
+            os.environ.get("NDVI_STORAGE_BASE_DIR"),
+            str(area_id),
+            str(year)
+        )
+
+        # Store the matrix to object storage
+        ObjectStorage.storeMatrix(ndvi, save_path, "ndvi_matrix.npy")
+
+        database_update.append((id, save_path))
+
+    # Update the database to reflect that images have been processed
+    for (id, save_path) in database_update:
+        # Update database indicating that NDVI images have been calculated
+        cursor.execute("UPDATE STORED_DATA_INFO SET ndvi_generated = ? WHERE id = ?", (1, id))
+
+        # Update database indicating where the NDVI files have been stored
+        cursor.execute(
+            "UPDATE STORED_DATA_INFO SET ndvi_data_path = ? WHERE id = ?",
+            (save_path, id)
+        )
+    
+    # Commit the changes to the database
+    connection.commit()
+
+    # Close the connection to the database
+    connection.close()
