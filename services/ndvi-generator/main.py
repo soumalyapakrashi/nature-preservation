@@ -61,29 +61,17 @@ if(__name__ == "__main__"):
 
     # Iterate over each tuple
     for (id, area_id, year, sat_data_path) in cursor:
-        # Generate the path to the image files
-        temp_path = os.path.join(
-            sat_data_path,
-            "GRANULE"
-        )
-
-        final_path = os.path.join(
-            temp_path,
-            os.listdir(temp_path)[0],
-            "IMG_DATA"
-        )
-
         # List all the image files in the required directory
-        image_files = os.listdir(final_path)
+        image_files = os.listdir(sat_data_path)
 
         # Iterate over all the image files and choose only bands 4 and 8.
         # Load the chosen images using OpenCV.
         for image_file in image_files:
             if(image_file.endswith("B04.jp2")):
-                band_red_image = cv2.imread(os.path.join(final_path, image_file), cv2.IMREAD_GRAYSCALE)
+                band_red_image = cv2.imread(os.path.join(sat_data_path, image_file), cv2.IMREAD_GRAYSCALE)
 
             elif(image_file.endswith("B08.jp2")):
-                band_nir_image = cv2.imread(os.path.join(final_path, image_file), cv2.IMREAD_GRAYSCALE)
+                band_nir_image = cv2.imread(os.path.join(sat_data_path, image_file), cv2.IMREAD_GRAYSCALE)
 
         # Generate the NDVI matrix.
         # This ndvi variable will be a np.ndarray if no GPU is available.
