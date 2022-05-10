@@ -94,7 +94,11 @@ if(__name__ == "__main__"):
     # Add the area to database if not already present
     cursor.execute("SELECT area_id FROM AREAS WHERE area_name = ?", (args.area,))
 
-    if(cursor.rowcount == 0):
+    rowcount = 0
+    for (area_id,) in cursor:
+        rowcount += 1
+
+    if(rowcount == 0):
         cursor.execute("INSERT INTO AREAS (area_name) VALUES (?)", (args.area,))
         area_id = cursor.lastrowid
     else:
