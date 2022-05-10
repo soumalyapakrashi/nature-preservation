@@ -72,26 +72,33 @@ def visualizeNDVICategorical(ndvi_image: np.ndarray) -> np.ndarray:
          
             #Categorical
             # If the NDVI value is less than 0, then we consider no vegetation, hence the nir band is mapped to the entire red band 
-            if(ndvi_image[row][column] < 0):
-                band_red_image[row][column] = 255
+            if(ndvi_image[row][column] <= -0.5):
+                band_red_image[row][column] = 166
+                band_green_image[row][column] = 97
+                band_blue_image[row][column] = 26
+
+            elif(ndvi_image[row][column] <= -0.25):
+                band_red_image[row][column] = 223
+                band_green_image[row][column] = 194
+                band_blue_image[row][column] = 125
 
             # If the NDVI value is greater than equal to 0 and less than 0.2, then we consider almost negligible vegetation, hence the nir band is mapped to a mixture of red and green band (orange colour)
-            elif(ndvi_image[row][column] >= 0 and ndvi_image[row][column] < 0.2):
-                band_red_image[row][column] = 255
-                band_green_image[row][column] = 150
+            elif(ndvi_image[row][column] <= 0.25):
+                band_red_image[row][column] = 245
+                band_green_image[row][column] = 245
+                band_blue_image[row][column] = 245
 
             # If the NDVI value is greater than equal to 0.2 and less than 0.4, then we consider very low amount of vegetation, hence the nir band is mapped to a mixture of red and green band (yellow colour)
-            elif(ndvi_image[row][column] >= 0.2 and ndvi_image[row][column] < 0.4):
-                band_red_image[row][column] = 255
-                band_green_image[row][column] = 255
-
-            # If the NDVI value is greater than equal to 0.4 and less than 0.6, then we consider light vegetation, hence the nir band is mapped to green band (light green colour)
-            elif(ndvi_image[row][column] >= 0.4 and ndvi_image[row][column] < 0.6):
-                band_green_image[row][column] = 255
+            elif(ndvi_image[row][column] <= 0.5):
+                band_red_image[row][column] = 128
+                band_green_image[row][column] = 205
+                band_blue_image[row][column] = 193
 
             # If the NDVI value is greater than equal to 0.6, then we consider heavy vegetation, hence the nir band is mapped to green band (deep green colour)
             else:
-                band_green_image[row][column] = 100
+                band_red_image[row][column] = 1
+                band_green_image[row][column] = 133
+                band_blue_image[row][column] = 113
 
     final_ndvi_image = cv2.merge([band_blue_image, band_green_image, band_red_image])
             
