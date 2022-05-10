@@ -1,8 +1,5 @@
-import tempfile
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-from pyparsing import And
 
 def visualizeRGB(band_red_image: np.ndarray, band_green_image: np.ndarray, band_blue_image: np.ndarray, filename: str = "rgb.jpg") -> None:
     # Convert the input matrix to 32 bit float number.
@@ -35,7 +32,7 @@ def visualizeRGB(band_red_image: np.ndarray, band_green_image: np.ndarray, band_
 # Function to visualize the NDVI image calculated.
 # Input is a numpy array of the NDVI image (values ranging between -1 and 1).
 # Output will be a JPG file.
-def visualizeNDVIContinuous(ndvi_image: np.ndarray, filename: str = "ndvi.jpg") -> None:
+def visualizeNDVIContinuous(ndvi_image: np.ndarray) -> np.ndarray:
     
     band_blue_image = np.zeros(ndvi_image.shape, dtype = np.float32)
     band_green_image = np.zeros(ndvi_image.shape, dtype = np.float32)
@@ -62,10 +59,10 @@ def visualizeNDVIContinuous(ndvi_image: np.ndarray, filename: str = "ndvi.jpg") 
             
     final_ndvi_image = cv2.merge([band_blue_image, band_green_image, band_red_image])
             
-    cv2.imwrite("ndvi_image_cont.jpg", final_ndvi_image)
+    return final_ndvi_image
 
 
-def visualizeNDVICategorical(ndvi_image: np.ndarray, filename: str = "ndvi.jpg") -> None:
+def visualizeNDVICategorical(ndvi_image: np.ndarray) -> np.ndarray:
     
     band_blue_image = np.zeros(ndvi_image.shape, dtype = np.float32)
     band_green_image = np.zeros(ndvi_image.shape, dtype = np.float32)
@@ -98,13 +95,13 @@ def visualizeNDVICategorical(ndvi_image: np.ndarray, filename: str = "ndvi.jpg")
 
     final_ndvi_image = cv2.merge([band_blue_image, band_green_image, band_red_image])
             
-    cv2.imwrite("ndvi_image_cat.jpg", final_ndvi_image)
+    return final_ndvi_image
 
 
 # Function to visualize the change map obtained by differencing NDVI of two years.
 # Input is a numpy array containing the change map (values ranging between -2 and 2).
 # Output will be a JPG file.
-def visualizeChangeMap(change_map: np.ndarray, filename: str = "change_map.jpg") -> None:
+def visualizeChangeMap(change_map: np.ndarray) -> None:
     pass
 
 
