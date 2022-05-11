@@ -29,6 +29,7 @@ if(__name__ == "__main__"):
     print("2. Generate statistics for the change between 2 years")
     choice_main = int(input("Choice: "))
 
+    # Generate statistics for a particular year
     if(choice_main == 1):
         # Present the areas available for selection to the user
         cursor.execute("SELECT area_name FROM AREAS")
@@ -64,8 +65,21 @@ if(__name__ == "__main__"):
 
         # Load the NDVI matrix
         ndvi: np.ndarray = np.load(file = os.path.join(ndvi_matrix_path, "ndvi_matrix.npy"))
+
+        # Calculate vegetation cover
+        vegetation_stats = generate_stats.calculateVegetationCover(ndvi)
+        print(f"\n{vegetation_stats}")
+
+        # Calculate land cover
+        land_stats = generate_stats.calculateLandCover(ndvi)
+        print(f"\n{land_stats}")
+
+        # Print the bar chart
+        combined_stats = { **vegetation_stats, **land_stats }
+        generate_stats.plotBarVegetation(combined_stats)
     
 
+    # Generate statistics for the change between 2 years
     elif(choice_main == 2):
         # Present the areas available for selection to the user
         cursor.execute("SELECT area_name FROM AREAS")
