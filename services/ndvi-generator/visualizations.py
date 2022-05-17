@@ -1,4 +1,5 @@
 import cv2
+import os
 import numpy as np
 
 def visualizeRGB(band_red_image: np.ndarray, band_green_image: np.ndarray, band_blue_image: np.ndarray, filename: str = "rgb.jpg") -> None:
@@ -71,34 +72,36 @@ def visualizeNDVICategorical(ndvi_image: np.ndarray) -> np.ndarray:
         for column in range(ndvi_image.shape[1]):
          
             #Categorical
-            # If the NDVI value is less than 0, then we consider no vegetation, hence the nir band is mapped to the entire red band 
-            if(ndvi_image[row][column] <= -0.5):
-                band_red_image[row][column] = 166
-                band_green_image[row][column] = 97
-                band_blue_image[row][column] = 26
 
-            elif(ndvi_image[row][column] <= -0.25):
-                band_red_image[row][column] = 223
-                band_green_image[row][column] = 194
-                band_blue_image[row][column] = 125
-
-            # If the NDVI value is greater than equal to 0 and less than 0.2, then we consider almost negligible vegetation, hence the nir band is mapped to a mixture of red and green band (orange colour)
-            elif(ndvi_image[row][column] <= 0.25):
-                band_red_image[row][column] = 245
-                band_green_image[row][column] = 245
-                band_blue_image[row][column] = 245
-
-            # If the NDVI value is greater than equal to 0.2 and less than 0.4, then we consider very low amount of vegetation, hence the nir band is mapped to a mixture of red and green band (yellow colour)
-            elif(ndvi_image[row][column] <= 0.5):
-                band_red_image[row][column] = 128
-                band_green_image[row][column] = 205
-                band_blue_image[row][column] = 193
-
-            # If the NDVI value is greater than equal to 0.6, then we consider heavy vegetation, hence the nir band is mapped to green band (deep green colour)
-            else:
+            # If heavy vegetation, a deep green colour is chosen
+            if(ndvi_image[row][column] >= float(os.environ.get("NDVI_THICK_VEGETATION"))):
                 band_red_image[row][column] = 1
                 band_green_image[row][column] = 133
                 band_blue_image[row][column] = 113
+            
+            # If moderate vegetation, a light green colour is chosen
+            elif(ndvi_image[row][column] >= float(os.environ.get("NDVI_MODERATE_VEGETATION"))):
+                band_red_image[row][column] = 128
+                band_green_image[row][column] = 205
+                band_blue_image[row][column] = 193
+            
+            # If sparse vegetation, a white colour is chosen
+            elif(ndvi_image[row][column] >= float(os.environ.get("NDVI_SPARSE_VEGETATION"))):
+                band_red_image[row][column] = 245
+                band_green_image[row][column] = 245
+                band_blue_image[row][column] = 245
+            
+            # If no vegetation, a light brown colour is chosen
+            elif(ndvi_image[row][column] >= float(os.environ.get("NDVI_NO_VEGETATION"))):
+                band_red_image[row][column] = 223
+                band_green_image[row][column] = 194
+                band_blue_image[row][column] = 125
+            
+            # If barren, a dark brown colour is chosen
+            elif(ndvi_image[row][column] >= float(os.environ.get("NDVI_BARREN"))):
+                band_red_image[row][column] = 166
+                band_green_image[row][column] = 97
+                band_blue_image[row][column] = 26
 
     final_ndvi_image = cv2.merge([band_blue_image, band_green_image, band_red_image])
             
