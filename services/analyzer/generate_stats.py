@@ -109,4 +109,8 @@ def plotBarVegetation(class_frequencies: dict[str: float]) -> None:
     axis.set_title("Vegetation Cover", loc ="left")
 
     # Output the plot
-    plt.savefig("vegetation_bar.tmp.png")
+    filename = "vegetation_bar.tmp.png"
+    plt.savefig(filename)
+
+    # Print the output location to terminal so that it can be accessed easily
+    print(f"Histogram: {os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)}")

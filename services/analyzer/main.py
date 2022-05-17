@@ -68,11 +68,11 @@ if(__name__ == "__main__"):
 
         # Calculate vegetation cover
         vegetation_stats = generate_stats.calculateVegetationCover(ndvi)
-        print(f"\n{vegetation_stats}")
+        print(f"\nVegetation Cover: {vegetation_stats}")
 
         # Calculate land cover
         land_stats = generate_stats.calculateLandCover(ndvi)
-        print(f"\n{land_stats}")
+        print(f"Land Cover: {land_stats}")
 
         # Print the bar chart
         combined_stats = { **vegetation_stats, **land_stats }
