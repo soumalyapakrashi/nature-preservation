@@ -11,6 +11,7 @@
     6. Setup image-fetcher module
     7. Setup ndvi-generator module
     8. Setup analyzer module
+    9. Setup database tables
 
 
 ## Setup
@@ -189,3 +190,14 @@ venv/Scripts/activate
 pip install -r requirements.txt
 deactivate
 ```
+
+
+### Setup database tables
+
+Finally add the required tables to the database. Open PHPMyAdmin by visiting `localhost/phpmyadmin`. From here, either run [db_setup.sql](./services/database/db_setup.sql) file, or perform the operations as stated in the file manually.
+
+Steps to perform to manually setup the database include:
+
+1. Create a database named `nature_preservation`.
+2. Select the database.
+3. Create the two tables `AREAS` and `STORED_DATA_INFO` as given in [db_setup.sql](./services/database/db_setup.sql) in the *Query Editor*.
