@@ -255,7 +255,7 @@ Execute the module.
 ```shell
 python main.py \
     --area {AREA_NAME} \
-    --year {YEAR} \
+    --date {DATE} \
     --image_path {IMAGE_PATH} \
     --crop_coords {CROP_COORDS}
 ```
@@ -264,7 +264,7 @@ Here, the values in the brackets (including the brackets) have to be replaced wi
 
 1. AREA_NAME - The name of the area of our interest. This may be for example, *Gorumara*.
 
-2. YEAR - This is the year in which the corresponding image was taken
+2. DATE - This is the date in which the corresponding image was taken. The format should be *YYYY-MM-DD*.
 
 3. IMAGE_PATH - The absolute path of the folder where the .jp2 files are present (as seen in the last section).
 
