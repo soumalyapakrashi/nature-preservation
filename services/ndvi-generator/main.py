@@ -52,14 +52,16 @@ if(__name__ == "__main__"):
     # Get the cursor to the database
     cursor = connection.cursor()
     
-    # Get the images which have not been processed
-    cursor.execute("SELECT id, area_id, year, sat_data_path FROM STORED_DATA_INFO WHERE ndvi_generated = ?", (0,))
+    # Get the images which have not been processed.
+    # Images that have not been processed will have a 0 in their 'ndvi_generated' field.
+    # Else it will have a 1.
+    cursor.execute("SELECT id, area_id, date, sat_data_path FROM STORED_DATA_INFO WHERE ndvi_generated = ?", (0,))
 
     # This will contain the information about every image calculated so that database can be updated accordingly
     database_update = []
 
     # Iterate over each tuple
-    for (id, area_id, year, sat_data_path) in cursor:
+    for (id, area_id, date, sat_data_path) in cursor:
         # List all the image files in the required directory
         image_files = os.listdir(sat_data_path)
 
@@ -86,7 +88,7 @@ if(__name__ == "__main__"):
         save_path = os.path.join(
             os.environ.get("NDVI_STORAGE_BASE_DIR"),
             str(area_id),
-            str(year)
+            str(date)
         )
 
         # Store the matrix to object storage

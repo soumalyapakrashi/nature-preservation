@@ -18,9 +18,9 @@ if(__name__ == "__main__"):
     )
 
     parser.add_argument(
-        "--year",
+        "--date",
         required = True,
-        help = "Year in which the image was taken"
+        help = "Date on which the image was taken. The format should be YYYY-MM-DD"
     )
 
     parser.add_argument(
@@ -54,7 +54,7 @@ if(__name__ == "__main__"):
     cursor = connection.cursor()
 
     # Generate the output path
-    output_path = os.path.join("D:/Programs/nature-preservation/storage/satellite_data", args.area, args.year)
+    output_path = os.path.join("D:/Programs/nature-preservation/storage/satellite_data", args.area, args.date)
     os.makedirs(output_path, exist_ok = True)
 
     # Iterate over the images in the input path and copy the images to the output path.
@@ -107,8 +107,8 @@ if(__name__ == "__main__"):
     
     # Add the new image path data to database
     cursor.execute(
-        "INSERT INTO STORED_DATA_INFO (area_id, year, sat_data_path) VALUES (?, ?, ?)",
-        (area_id, args.year, output_path)
+        "INSERT INTO STORED_DATA_INFO (area_id, date, sat_data_path) VALUES (?, ?, ?)",
+        (area_id, args.date, output_path)
     )
 
     # Commit the changes made to the database

@@ -16,7 +16,7 @@ CREATE TABLE AREAS(
 CREATE TABLE STORED_DATA_INFO(
     id INT AUTO_INCREMENT,
     area_id INT REFERENCES AREAS(area_id),
-    year YEAR NOT NULL,
+    date DATE NOT NULL,
     sat_data_path VARCHAR(255) NOT NULL,
     ndvi_generated TINYINT DEFAULT 0,
     ndvi_data_path VARCHAR(255),

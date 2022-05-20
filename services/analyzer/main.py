@@ -2,6 +2,7 @@ import numpy as np
 import os
 from dotenv import load_dotenv
 import mariadb
+import datetime
 
 import generate_stats
 
@@ -46,22 +47,22 @@ if(__name__ == "__main__"):
 
         # After the area has been chosen, present the years for which data is available for the chosen area
         cursor.execute(
-            "SELECT year, ndvi_data_path FROM STORED_DATA_INFO WHERE area_id = (SELECT area_id FROM AREAS WHERE area_name = ?) AND ndvi_generated = ?",
+            "SELECT date, ndvi_data_path FROM STORED_DATA_INFO WHERE area_id = (SELECT area_id FROM AREAS WHERE area_name = ?) AND ndvi_generated = ?",
             (areas[choice_area - 1], 1)
         )
         results = []
 
-        for (year, ndvi_data_path) in cursor:
-            results.append((year, ndvi_data_path))
+        for (date, ndvi_data_path) in cursor:
+            results.append((date, ndvi_data_path))
         
-        print("\nSelect a Year for which calculation is to be done:")
-        for index, (year, ndvi_data_path) in enumerate(results):
-            print(f"{index + 1}. {year}")
+        print("\nSelect a Date for which calculation is to be done:")
+        for index, (date, ndvi_data_path) in enumerate(sorted(results, key = lambda x : x[0])):
+            print(f"{index + 1}. {date.year} {date.strftime('%B')}")
         
-        choice_year = int(input("Choice: "))
+        choice_date = int(input("Choice: "))
 
         # Generate the path to NDVI matrix corresponding to the year selected
-        ndvi_matrix_path: str = results[choice_year - 1][1]
+        ndvi_matrix_path: str = results[choice_date - 1][1]
 
         # Load the NDVI matrix
         ndvi: np.ndarray = np.load(file = os.path.join(ndvi_matrix_path, "ndvi_matrix.npy"))
@@ -96,24 +97,25 @@ if(__name__ == "__main__"):
 
         # After the area has been chosen, present the years for which data is available for the chosen area
         cursor.execute(
-            "SELECT year, ndvi_data_path FROM STORED_DATA_INFO WHERE area_id = (SELECT area_id FROM AREAS WHERE area_name = ?) AND ndvi_generated = ?",
+            "SELECT date, ndvi_data_path FROM STORED_DATA_INFO WHERE area_id = (SELECT area_id FROM AREAS WHERE area_name = ?) AND ndvi_generated = ?",
             (areas[choice_area - 1], 1)
         )
         results = []
 
-        for (year, ndvi_data_path) in cursor:
-            results.append((year, ndvi_data_path))
+        for (date, ndvi_data_path) in cursor:
+            python_date = datetime(date[0:4], date[5:7], date[8:10])
+            results.append((python_date, ndvi_data_path))
         
-        print("\nSelect a Year for which calculation is to be done:")
-        for index, (year, ndvi_data_path) in enumerate(results):
-            print(f"{index + 1}. {year}")
+        print("\nSelect Dates for which calculation is to be done:")
+        for index, (date, ndvi_data_path) in enumerate(sorted(results, key = lambda x : x[0])):
+            print(f"{index + 1}. {date.year} {date.strftime('%B')}")
         
-        choice_year1 = int(input("Choice Year 1 (This is the year at a previous date): "))
-        choice_year2 = int(input("Choice Year 2 (This is the year at a later date): "))
+        choice_date1 = int(input("Choice Date 1 (This is the previous date): "))
+        choice_date2 = int(input("Choice Date 2 (This is the later date): "))
 
         # Generate the path to NDVI matrices corresponding to the year selected
-        ndvi_matrix_path1: str = results[choice_year1 - 1][1]
-        ndvi_matrix_path2: str = results[choice_year2 - 1][1]
+        ndvi_matrix_path1: str = results[choice_date1 - 1][1]
+        ndvi_matrix_path2: str = results[choice_date2 - 1][1]
 
         # Load the NDVI matrices
         ndvi_start: np.ndarray = np.load(file = os.path.join(ndvi_matrix_path1, "ndvi_matrix.npy"))
