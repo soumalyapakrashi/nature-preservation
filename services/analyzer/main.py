@@ -5,6 +5,7 @@ import mariadb
 import datetime
 
 import generate_stats
+import generate_inference
 
 load_dotenv()
 
@@ -28,6 +29,7 @@ if(__name__ == "__main__"):
     print("Choose an option below:")
     print("1. Generate statistics for a particular year")
     print("2. Generate statistics for the change between 2 years")
+    print("3. Generate Inference for future time")
     choice_main = int(input("Choice: "))
 
     # Generate statistics for a particular year
@@ -103,8 +105,7 @@ if(__name__ == "__main__"):
         results = []
 
         for (date, ndvi_data_path) in cursor:
-            python_date = datetime(date[0:4], date[5:7], date[8:10])
-            results.append((python_date, ndvi_data_path))
+            results.append((date, ndvi_data_path))
         
         print("\nSelect Dates for which calculation is to be done:")
         for index, (date, ndvi_data_path) in enumerate(sorted(results, key = lambda x : x[0])):
@@ -123,3 +124,73 @@ if(__name__ == "__main__"):
 
         # Calculate the change
         change = ndvi_end - ndvi_start
+
+
+    # Generate inference for future time
+    elif(choice_main == 3):
+        # Present the areas available for selection to the user
+        cursor.execute("SELECT area_name FROM AREAS")
+        areas = []
+
+        for (area_name,) in cursor:
+            areas.append(area_name)
+        
+        print("\nSelect an Area. The available options are as follows:")
+        for index, area_name in enumerate(areas):
+            print(f"{index + 1}. {area_name}")
+        
+        choice_area = int(input("Choice: "))
+
+        # After the area has been chosen, get the years for which data is available for the chosen area
+        cursor.execute(
+            "SELECT date, ndvi_data_path FROM STORED_DATA_INFO WHERE area_id = (SELECT area_id FROM AREAS WHERE area_name = ?) AND ndvi_generated = ?",
+            (areas[choice_area - 1], 1)
+        )
+
+        # This dictionary will be sent to the inference section to be converted into a Pandas dataframe.
+        # This structure reflects the format expected by Prophet library - 2 columns, 1 for timestamp (ds)
+        # and the other for the value to be predicted (y).
+        prophet_compatible_dict = {
+            "ds": [],
+            "y": []
+        }
+
+        print("\nGenerating Vegetation Data for Images:")
+        output_csv = ""
+
+        for (date, ndvi_data_path) in cursor:
+            print(date)
+
+            # Add the date to the dictionary
+            prophet_compatible_dict["ds"].append(date)
+
+            # We want to infer the amount of land under vegetation cover.
+            # So we will only calculate forest cover.
+
+            # Load the NDVI matrix
+            ndvi: np.ndarray = np.load(file = os.path.join(ndvi_data_path, "ndvi_matrix.npy"))
+
+            # Calculate vegetation cover
+            vegetation_stats = generate_stats.calculateVegetationCover(ndvi)
+
+            # Here, we consider only moderate and thick vegetation
+            total_vegetation = vegetation_stats[os.environ.get("NDVI_MODERATE_VEGETATION")] + vegetation_stats[os.environ.get("NDVI_THICK_VEGETATION")]
+
+            # Add this total vegetation to the dictionary
+            prophet_compatible_dict["y"].append(total_vegetation)
+
+            # Add data to CSV string
+            output_csv += f"{str(date)},{str(total_vegetation)}\n"
+        
+        # Output the CSV file for importing into the inference section
+        with open("inference_csv.tmp.csv", "w") as file:
+            file.write(output_csv)
+        
+        print("\nCSV file exported. Now run generate_inference.py from WSL to perform inference.")
+        print("This is a workaround as the Prophet library used is not compatible with Windows.")
+        print("This will be soon removed when the application will be ported to Docker.")
+        
+        # Send over dictionary for inference
+        # This method will not work until application is ported to Docker.
+        # Until then, call generate_inference manually from WSL.
+        # generate_inference.infer(prophet_compatible_dict)

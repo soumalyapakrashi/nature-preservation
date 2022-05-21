@@ -6,3 +6,4 @@
 **/temp
 *.tmp.*
 **/storage
+**/venv_linux
