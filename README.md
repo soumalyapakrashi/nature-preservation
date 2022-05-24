@@ -3,23 +3,23 @@
 ## Contents
 
 1. Setup
-    1. Install Python and Virtualenv
-    2. Setup XAMPP
-    3. Setup GDAL
-    4. Setup WSL2 and Linux
-    5. Download the project
-    6. Setup the environment variables
-    7. Setup image-fetcher module
-    8. Setup ndvi-generator module
-    9. Setup analyzer module
-    10. Setup database tables
+    1. [Setup Python and Virtualenv](#setup-python-and-virtualenv)
+    2. [Setup XAMPP](#setup-xampp)
+    3. [Setup GDAL](#setup-gdal)
+    4. [Setup WSL2 and Linux](#setup-wsl2-and-linux)
+    5. [Download the project](#download-the-project)
+    6. [Setup the environment variables](#setup-the-environment-variables)
+    7. [Setup image-fetcher module](#setup-image-fetcher-module)
+    8. [Setup ndvi-generator module](#setup-ndvi-generator-module)
+    9. [Setup analyzer module](#setup-analyzer-module)
+    10. [Setup database tables](#setup-database-tables)
 
 2. Usage
-    1. Obtaining Satellite Data
-    2. Verify Database is Running
-    3. Crop Image to Area of Interest
-    4. Generate NDVI Maps
-    5. Analyze Areas of Interest
+    1. [Obtaining Satellite Data](#obtaining-satellite-data)
+    2. [Verify Database is Running](#verify-database-is-running)
+    3. [Crop Image to Area of Interest](#crop-image-to-area-of-interest)
+    4. [Generate NDVI Maps](#generate-ndvi-maps)
+    5. [Analyze Areas of Interest](#analyze-areas-of-interest)
 
 
 ## Setup
