@@ -2,10 +2,8 @@ import numpy as np
 import os
 from dotenv import load_dotenv
 import mariadb
-import datetime
 
 import generate_stats
-import generate_inference
 
 load_dotenv()
 
@@ -156,13 +154,19 @@ if(__name__ == "__main__"):
         }
 
         print("\nGenerating Vegetation Data for Images:")
-        output_csv = ""
+        output_csv = "ds,y\n"
 
         for (date, ndvi_data_path) in cursor:
+            # Ignore the 2022 data as it is not correct
+            if(date.year == 2022):
+                continue
+
             print(date)
+            year = str(date)[0:4]
+            month = str(date)[5:7]
 
             # Add the date to the dictionary
-            prophet_compatible_dict["ds"].append(date)
+            prophet_compatible_dict["ds"].append(f"{year}-{month}")
 
             # We want to infer the amount of land under vegetation cover.
             # So we will only calculate forest cover.
@@ -180,7 +184,7 @@ if(__name__ == "__main__"):
             prophet_compatible_dict["y"].append(total_vegetation)
 
             # Add data to CSV string
-            output_csv += f"{str(date)},{str(total_vegetation)}\n"
+            output_csv += f"{year}-{month},{str(total_vegetation)}\n"
         
         # Output the CSV file for importing into the inference section
         with open("inference_csv.tmp.csv", "w") as file:
