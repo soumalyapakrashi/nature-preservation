@@ -6,12 +6,13 @@
     1. Install Python and Virtualenv
     2. Setup XAMPP
     3. Setup GDAL
-    4. Download the project
-    5. Setup the environment variables
-    6. Setup image-fetcher module
-    7. Setup ndvi-generator module
-    8. Setup analyzer module
-    9. Setup database tables
+    4. Setup WSL2 and Linux
+    5. Download the project
+    6. Setup the environment variables
+    7. Setup image-fetcher module
+    8. Setup ndvi-generator module
+    9. Setup analyzer module
+    10. Setup database tables
 
 2. Usage
     1. Obtaining Satellite Data
@@ -79,6 +80,50 @@ gdalwarp --version
 ```
 
 The output should show the version number of GDAL installed and its release date.
+
+
+### Setup WSL2 and Linux
+
+To run the inference feature in `analyzer` module, this step needs to be performed. If not, skip this step.
+
+Enable WSL2 and download a Linux distro (Ubuntu preferably as the commands given are for Ubuntu). Setup the Linux distro. It will probably already come with a Python version installed (whichever is the latest one). But that will not work. Python version 3.8 is required for the *Prophet* library used in the inference feature to work.
+
+To install python 3.8 along with whatever is already installed:
+
+```shell
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.8
+```
+
+From: [https://askubuntu.com/questions/682869/how-do-i-install-a-different-python-version-using-apt-get](https://askubuntu.com/questions/682869/how-do-i-install-a-different-python-version-using-apt-get)
+
+Then install the dependencies required for other libraries to install.
+
+```shell
+sudo apt-get install python3.8-dev
+sudo apt-get install python3.8-distutils
+```
+
+From:
+
+[https://github.com/pypa/get-pip/issues/124](https://github.com/pypa/get-pip/issues/124)
+
+[https://stackoverflow.com/questions/26053982/setup-script-exited-with-error-command-x86-64-linux-gnu-gcc-failed-with-exit](https://stackoverflow.com/questions/26053982/setup-script-exited-with-error-command-x86-64-linux-gnu-gcc-failed-with-exit)
+
+Then install virtualenv for Python 3.8.
+
+```shell
+python3.8 -m pip install virtualenv
+```
+
+Additionally check the version of GCC installed.
+
+```shell
+gcc --version
+```
+The version should be above `9.0`.
+
 
 
 ### Download the project
@@ -198,6 +243,14 @@ pip install -r requirements.txt
 deactivate
 ```
 
+Then open the WSL2 terminal and move to the `analyzer` module folder. Create a virtual environment and install the required dependencies:
+
+```shell
+python3.8 -m virtualenv venv_linux
+source venv_linux/bin/activate
+pip install -r requirements_linux.txt
+```
+
 
 ### Setup database tables
 
@@ -207,7 +260,7 @@ Steps to perform to manually setup the database include:
 
 1. Create a database named `nature_preservation`.
 2. Select the database.
-3. Create the two tables `AREAS` and `STORED_DATA_INFO` as given in [db_setup.sql](./services/database/db_setup.sql) in the *Query Editor*.
+3. Create the two tables `AREAS` and `STORED_DATA_INFO` as given in [db_setup.sql](./services/database/db_setup.sql) in the *SQL Tab*.
 
 
 ## Usage
@@ -264,7 +317,7 @@ Here, the values in the brackets (including the brackets) have to be replaced wi
 
 1. AREA_NAME - The name of the area of our interest. This may be for example, *Gorumara*.
 
-2. DATE - This is the date in which the corresponding image was taken. The format should be *YYYY-MM-DD*.
+2. DATE - This is the date in which the corresponding image was taken. The format should be *"YYYY-MM-DD"*.
 
 3. IMAGE_PATH - The absolute path of the folder where the .jp2 files are present (as seen in the last section).
 
@@ -293,3 +346,5 @@ This command has been taken from this [StackOverflow](https://stackoverflow.com/
 ### Analyze Areas of Interest
 
 Once NDVI has been calculated, different analysis tasks can be run on the data. Move to the `analysis` module (folder) and run the `main.py` file. This is an interactive program. Proceed accordingly and the output of the module will be printed to the terminal itself. Remember to activate the corresponding virtual environment before running this module.
+
+If performing inference on future data, then just executing the `main.py` file will not do. On running this, it will generate a CSV file in the same directory. After that, go to WSL terminal, activate the environment generated for linux, and run the `generate_inference.py` file. This will generate the remaining inference data.
