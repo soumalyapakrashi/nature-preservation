@@ -33,7 +33,7 @@ def calculateVegetationCover(ndvi: np.ndarray) -> dict[str: float]:
     return vegetation_dict
 
 
-# Function calculates the percentages of non-vegetated land cover
+# Function calculates the percentages of non-vegetated regions
 def calculateLandCover(ndvi: np.ndarray) -> dict[str: float]:
     # Counters
     no_vegetation = 0
@@ -112,6 +112,73 @@ def plotBarVegetation(class_frequencies: dict[str: float]) -> None:
 
     # Output the plot
     filename = "vegetation_bar.tmp.png"
+    plt.savefig(filename)
+
+    # Print the output location to terminal so that it can be accessed easily
+    print(f"Histogram: {os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)}")
+
+
+# Function to plot a combined bar graph at different times of the different classes of land cover.
+# The classes are thick vegetation, moderate vegetation, sparse vegetation,
+# no vegetation and barren.
+def plotBarVegetationCombined(class_frequencies1: dict[str: float], class_frequencies2: dict[str: float], year_input: list) -> None:
+    # Process the data to be shown
+    year_input = [str(x) for x in year_input]
+    names = ["Thick Vegetation "+year_input[0], "Thick Vegetation "+year_input[1], "Moderate Vegetation "+year_input[0], "Moderate Vegetation "+year_input[1], "Sparse Vegetation "+year_input[0], "Sparse Vegetation "+year_input[1], "No Vegetation "+year_input[0], "No Vegetation "+year_input[1], "Barren "+year_input[0], "Barren "+year_input[1]]
+    values = [
+        class_frequencies1[os.environ.get("NDVI_THICK_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
+        class_frequencies2[os.environ.get("NDVI_THICK_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
+        class_frequencies1[os.environ.get("NDVI_MODERATE_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
+        class_frequencies2[os.environ.get("NDVI_MODERATE_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
+        class_frequencies1[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
+        class_frequencies2[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
+        class_frequencies1[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
+        class_frequencies2[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
+        class_frequencies1[os.environ.get("NDVI_BARREN")] / class_frequencies1["total_pixels"] * 100.0,
+        class_frequencies2[os.environ.get("NDVI_BARREN")] / class_frequencies2["total_pixels"] * 100.0
+    ]
+
+    # Figure size
+    figure, axis = plt.subplots(figsize = (16, 9))
+
+    # Horizontal bar plot
+    colors=['blue', 'orange']
+    axis.barh(names, values, color = colors)
+    # plt.bar(names, values, color = "blue")
+
+    # Remove axes splines
+    for spline in ("top", "bottom", "left", "right"):
+        axis.spines[spline].set_visible(False)
+
+    # Set x label
+    axis.set_xlabel("Landcover (in %)")
+
+    # Add padding between axes and labels
+    axis.xaxis.set_tick_params(pad = 5)
+    axis.yaxis.set_tick_params(pad = 5)
+
+    # Add x, y gridlines
+    axis.grid(b = True, color ="grey", linestyle ="-.", linewidth = 0.5, alpha = 0.7)
+
+    # Show top values
+    axis.invert_yaxis()
+
+    # Add annotation to bars
+    for i in axis.patches:
+        plt.text(
+            i.get_width() + 0.2,
+            i.get_y() + 0.5,
+            str(round((i.get_width()), 2)),
+            fontsize = 10,
+            fontweight ="bold",
+            color ="grey"
+        )
+    
+    # Add Plot Title
+    axis.set_title("Vegetation Cover", loc ="left")
+
+    # Output the plot
+    filename = "vegetation_bar_combined.tmp.png"
     plt.savefig(filename)
 
     # Print the output location to terminal so that it can be accessed easily
