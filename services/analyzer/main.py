@@ -76,11 +76,11 @@ if(__name__ == "__main__"):
 
         # Moderate vegetation cover
         moderate_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_MODERATE_VEGETATION")] / vegetation_stats["total_pixels"] *100)
-        print(f"\nModerate Vegetation Cover: {moderate_vegetation_percent} %")
+        print(f"Moderate Vegetation Cover: {moderate_vegetation_percent} %")
 
         # Thick vegetation cover
         thick_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_THICK_VEGETATION")] / vegetation_stats["total_pixels"] *100)
-        print(f"\nThick Vegetation Cover: {thick_vegetation_percent} %")
+        print(f"Thick Vegetation Cover: {thick_vegetation_percent} %")
 
         # Total vegetated area
         total_vegetation = "{:.2f}".format((vegetation_stats[os.environ.get("NDVI_SPARSE_VEGETATION")] + vegetation_stats[os.environ.get("NDVI_MODERATE_VEGETATION")] + vegetation_stats[os.environ.get("NDVI_THICK_VEGETATION")]) / vegetation_stats["total_pixels"] *100)
@@ -89,7 +89,7 @@ if(__name__ == "__main__"):
         # Calculate land cover
         land_stats = generate_stats.calculateLandCover(ndvi)
         no_vegetation_percent = "{:.2f}".format((land_stats[os.environ.get("NDVI_BARREN")] + land_stats[os.environ.get("NDVI_NO_VEGETATION")]) / land_stats["total_pixels"] *100)
-        print(f"\nNon Vegetated Area: {no_vegetation_percent} %")
+        print(f"Non Vegetated Area: {no_vegetation_percent} %")
 
         # Print the bar chart
         combined_stats = { **vegetation_stats, **land_stats }
@@ -157,22 +157,22 @@ if(__name__ == "__main__"):
         if(vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] > vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")]):
             change_in_vegetation_cover = vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] - vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")]
             percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] * 100)
-            print(f"\nModerate Vegetation Cover has decreased by {percent_change} %")
+            print(f"Moderate Vegetation Cover has decreased by {percent_change} %")
 
         else:
             change_in_vegetation_cover = vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")]
             percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")] * 100)
-            print(f"\nModerate Vegetation Cover has increased by {percent_change} %")
+            print(f"Moderate Vegetation Cover has increased by {percent_change} %")
         
         # Calculate change vegetation cover for thick vegetation
         if(vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")] > vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")]):
             change_in_vegetation_cover = vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")] - vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")]
             percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")] * 100)
-            print(f"\nThick Vegetation Cover has decreased by {percent_change} %")
+            print(f"Thick Vegetation Cover has decreased by {percent_change} %")
         else:
             change_in_vegetation_cover = vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")]
             percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")] * 100)
-            print(f"\nThick Vegetation Cover has increased by {percent_change} %")
+            print(f"Thick Vegetation Cover has increased by {percent_change} %")
         
         # Overall change in vegetation
         total_vegetation_start = vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")] + vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] + vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")]
@@ -200,9 +200,7 @@ if(__name__ == "__main__"):
         # Print the combined bar chart
         combined_stats_start = { **vegetation_stats_start, **land_stats_start }
         combined_stats_end = { **vegetation_stats_end, **land_stats_end }
-        # choice_of_years = np.array(choice_of_years)
-        # print(type(choice_of_years[0]))
-        generate_stats.plotBarVegetationCombined(combined_stats_start, combined_stats_end, choice_of_years)
+        generate_stats.plotBarVegetationCombined(combined_stats_start, combined_stats_end, [choice_of_years[choice_date1], choice_of_years[choice_date2]])
 
     # Generate inference for future time
     elif(choice_main == 3):

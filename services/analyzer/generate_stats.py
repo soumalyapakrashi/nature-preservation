@@ -64,13 +64,12 @@ def calculateLandCover(ndvi: np.ndarray) -> dict[str: float]:
 # no vegetation and barren.
 def plotBarVegetation(class_frequencies: dict[str: float]) -> None:
     # Process the data to be shown
-    names = ["Thick Vegetation", "Moderate Vegetation", "Sparse Vegetation", "No Vegetation", "Barren"]
+    names = ["Thick Vegetation", "Moderate Vegetation", "Sparse Vegetation", "No Vegetation"]
     values = [
         class_frequencies[os.environ.get("NDVI_THICK_VEGETATION")] / class_frequencies["total_pixels"] * 100.0,
         class_frequencies[os.environ.get("NDVI_MODERATE_VEGETATION")] / class_frequencies["total_pixels"] * 100.0,
         class_frequencies[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies["total_pixels"] * 100.0,
-        class_frequencies[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies["total_pixels"] * 100.0,
-        class_frequencies[os.environ.get("NDVI_BARREN")] / class_frequencies["total_pixels"] * 100.0
+        (class_frequencies[os.environ.get("NDVI_NO_VEGETATION")] + class_frequencies[os.environ.get("NDVI_BARREN")]) / class_frequencies["total_pixels"] * 100.0
     ]
 
     # Figure size
@@ -115,7 +114,7 @@ def plotBarVegetation(class_frequencies: dict[str: float]) -> None:
     plt.savefig(filename)
 
     # Print the output location to terminal so that it can be accessed easily
-    print(f"Histogram: {os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)}")
+    print(f"\nGraph: {os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)}")
 
 
 # Function to plot a combined bar graph at different times of the different classes of land cover.
@@ -124,7 +123,7 @@ def plotBarVegetation(class_frequencies: dict[str: float]) -> None:
 def plotBarVegetationCombined(class_frequencies1: dict[str: float], class_frequencies2: dict[str: float], year_input: list) -> None:
     # Process the data to be shown
     year_input = [str(x) for x in year_input]
-    names = ["Thick Vegetation "+year_input[0], "Thick Vegetation "+year_input[1], "Moderate Vegetation "+year_input[0], "Moderate Vegetation "+year_input[1], "Sparse Vegetation "+year_input[0], "Sparse Vegetation "+year_input[1], "No Vegetation "+year_input[0], "No Vegetation "+year_input[1], "Barren "+year_input[0], "Barren "+year_input[1]]
+    names = ["Thick Vegetation "+year_input[0], "Thick Vegetation "+year_input[1], "Moderate Vegetation "+year_input[0], "Moderate Vegetation "+year_input[1], "Sparse Vegetation "+year_input[0], "Sparse Vegetation "+year_input[1], "No Vegetation "+year_input[0], "No Vegetation "+year_input[1]]
     values = [
         class_frequencies1[os.environ.get("NDVI_THICK_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
         class_frequencies2[os.environ.get("NDVI_THICK_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
@@ -132,10 +131,8 @@ def plotBarVegetationCombined(class_frequencies1: dict[str: float], class_freque
         class_frequencies2[os.environ.get("NDVI_MODERATE_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
         class_frequencies1[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
         class_frequencies2[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
-        class_frequencies1[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
-        class_frequencies2[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
-        class_frequencies1[os.environ.get("NDVI_BARREN")] / class_frequencies1["total_pixels"] * 100.0,
-        class_frequencies2[os.environ.get("NDVI_BARREN")] / class_frequencies2["total_pixels"] * 100.0
+        (class_frequencies1[os.environ.get("NDVI_NO_VEGETATION")] + class_frequencies1[os.environ.get("NDVI_BARREN")]) / class_frequencies1["total_pixels"] * 100.0,
+        (class_frequencies2[os.environ.get("NDVI_NO_VEGETATION")] + class_frequencies2[os.environ.get("NDVI_BARREN")]) / class_frequencies2["total_pixels"] * 100.0
     ]
 
     # Figure size
@@ -182,4 +179,4 @@ def plotBarVegetationCombined(class_frequencies1: dict[str: float], class_freque
     plt.savefig(filename)
 
     # Print the output location to terminal so that it can be accessed easily
-    print(f"Histogram: {os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)}")
+    print(f"\nGraph: {os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)}")

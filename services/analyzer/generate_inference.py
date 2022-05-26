@@ -70,7 +70,7 @@ def infer(input_data) -> str:
 
     # Calculate and print the rate of change of forest cover.
     r = (1 / (current_year - 2016)) * math.log(((area_at_end_date * 100) / (area_at_start_date * 100)))
-    print(f"\nRate of {'Deforestation' if r < 0.0 else 'Reforestation'} predicted from December 2016 to December {current_year}: {round(abs(r * 100), 2)}% per year")
+    print(f"\nRate of {'Deforestation' if r < 0.0 else 'Reforestation'} predicted from December 2016 to December {current_year}: {round(abs(r * 100), 2)} % per year")
 
     # Now we predict the change in forest cover. Here, we say how much forest cover will change in the current
     # year from a similar time in last year. Again, this similar time is important because of seasonality.
