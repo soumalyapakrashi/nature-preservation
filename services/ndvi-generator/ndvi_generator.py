@@ -1,6 +1,5 @@
 import GPUtil
 import numpy as np
-import cupy as cp
 np.seterr(invalid = "ignore")
 
 # Check if GPU is available and set flag accordingly
@@ -10,10 +9,11 @@ if(len(available_gpu_list) == 0):
     gpu_available: bool = False
 else:
     gpu_available: bool = True
+    import cupy as cp
 
 
 # Function to calculate NDVI on the GPU
-def _computeOnGPU(band_red_image: np.ndarray, band_nir_image: np.ndarray) -> cp.ndarray:
+def _computeOnGPU(band_red_image: np.ndarray, band_nir_image: np.ndarray):
     # Load the images into GPU memory
     band_red_image = cp.array(band_red_image, dtype = cp.int32)
     band_nir_image = cp.array(band_nir_image, dtype = cp.int32)

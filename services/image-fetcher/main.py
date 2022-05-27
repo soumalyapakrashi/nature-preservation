@@ -54,7 +54,7 @@ if(__name__ == "__main__"):
     cursor = connection.cursor()
 
     # Generate the output path
-    output_path = os.path.join("D:/Programs/nature-preservation/storage/satellite_data", args.area, args.date)
+    output_path = os.path.join(os.environ.get("SAT_STORAGE_BASE_DIR"), args.area, args.date)
     os.makedirs(output_path, exist_ok = True)
 
     # Iterate over the images in the input path and copy the images to the output path.

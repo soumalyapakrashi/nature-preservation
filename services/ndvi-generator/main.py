@@ -1,5 +1,4 @@
 import numpy as np
-import cupy as cp
 import cv2
 import GPUtil
 from dotenv import load_dotenv
@@ -18,6 +17,7 @@ if(len(available_gpu_list) == 0):
     gpu_available: bool = False
 else:
     gpu_available: bool = True
+    import cupy as cp
 
 
 # This class stores objects to the disk.

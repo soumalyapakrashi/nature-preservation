@@ -202,6 +202,7 @@ if(__name__ == "__main__"):
         combined_stats_end = { **vegetation_stats_end, **land_stats_end }
         generate_stats.plotBarVegetationCombined(combined_stats_start, combined_stats_end, [choice_of_years[choice_date1], choice_of_years[choice_date2]])
 
+
     # Generate inference for future time
     elif(choice_main == 3):
         # Present the areas available for selection to the user
