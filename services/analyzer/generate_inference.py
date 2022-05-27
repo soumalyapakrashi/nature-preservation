@@ -57,20 +57,18 @@ def infer(input_data) -> str:
     # change in forest cover by the end of the year. Subsequently, we have to take December of 2016 due
     # to the effects of seasonality over time series data.
     current_year = datetime.date.today().year
-    end_date = f"{current_year}-12"
+    end_date = f"{current_year - 1}-12"
     start_date = "2016-12"
 
     # Area under forest cover at start date. This is taken from the dataset.
-    area_at_start_date = df.loc[df['ds'] == start_date]['y'].tolist()[0]
-    # print(((area_at_start_date * 100) / 1000000), "square kilometers")
+    area_at_start_date = round(model.predict(pd.DataFrame.from_dict({'ds': [start_date]}))['yhat'].tolist()[0])
 
     # Area under forest cover at end date. This is predicted from the fitted model.
     area_at_end_date = round(model.predict(pd.DataFrame.from_dict({'ds': [end_date]}))['yhat'].tolist()[0])
-    # print(((area_at_end_date * 100) / 1000000), "square kilometers")
 
     # Calculate and print the rate of change of forest cover.
-    r = (1 / (current_year - 2016)) * math.log(((area_at_end_date * 100) / (area_at_start_date * 100)))
-    print(f"\nRate of {'Deforestation' if r < 0.0 else 'Reforestation'} predicted from December 2016 to December {current_year}: {round(abs(r * 100), 2)} % per year")
+    r = (1 / (current_year - 2016 - 1)) * math.log(((area_at_end_date * 100) / (area_at_start_date * 100)))
+    print(f"\nRate of {'Deforestation' if r < 0.0 else 'Reforestation'} calculated from December 2016 to December {current_year - 1}: {round(abs(r * 100), 2)} % per year\n")
 
     # Now we predict the change in forest cover. Here, we say how much forest cover will change in the current
     # year from a similar time in last year. Again, this similar time is important because of seasonality.
@@ -78,6 +76,9 @@ def infer(input_data) -> str:
     # We first determine the previous year and get the forest cover from dataset.
     previous_date = f"{current_year - 1}-12"
     area_at_previous_date = df.loc[df['ds'] == previous_date]['y'].tolist()[0]
+
+    end_date = f"{current_year}-12"
+    area_at_end_date = round(model.predict(pd.DataFrame.from_dict({'ds': [end_date]}))['yhat'].tolist()[0])
 
     # Then we calculate how many pixels will change.
     changed_area = area_at_end_date - area_at_previous_date
@@ -87,7 +88,7 @@ def infer(input_data) -> str:
     # by 10^6
     changed_area = (changed_area * 100) / 1000000
 
-    print(f"Approximately {round(abs(changed_area), 2)} square kilometers of land will be {'Deforested' if changed_area < 0.0 else 'Reforested'} by December {current_year} compared to that in December {current_year - 1}")
+    print(f"\nApproximately {round(abs(changed_area), 2)} square kilometers of land will be {'Deforested' if changed_area < 0.0 else 'Reforested'} by December {current_year} compared to that in December {current_year - 1}")
 
 
 if(__name__ == "__main__"):
