@@ -45,13 +45,9 @@ def calculateLandCover(ndvi: np.ndarray) -> dict[str: float]:
             if(ndvi[row][column] < float(os.environ.get("NDVI_SPARSE_VEGETATION")) and 
                 ndvi[row][column] >= float(os.environ.get("NDVI_NO_VEGETATION"))):
                 no_vegetation += 1
-            elif(ndvi[row][column] >= float(os.environ.get("NDVI_BARREN")) and
-                ndvi[row][column] < float(os.environ.get("NDVI_NO_VEGETATION"))):
-                barren += 1
     
     # Construct a dictionary from the above statistics
     land_dict = {
-        os.environ.get("NDVI_BARREN"): barren,
         os.environ.get("NDVI_NO_VEGETATION"): no_vegetation,
         "total_pixels": ndvi.shape[0] * ndvi.shape[1]
     }
@@ -69,7 +65,7 @@ def plotBarVegetation(class_frequencies: dict[str: float]) -> None:
         class_frequencies[os.environ.get("NDVI_THICK_VEGETATION")] / class_frequencies["total_pixels"] * 100.0,
         class_frequencies[os.environ.get("NDVI_MODERATE_VEGETATION")] / class_frequencies["total_pixels"] * 100.0,
         class_frequencies[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies["total_pixels"] * 100.0,
-        (class_frequencies[os.environ.get("NDVI_NO_VEGETATION")] + class_frequencies[os.environ.get("NDVI_BARREN")]) / class_frequencies["total_pixels"] * 100.0
+        class_frequencies[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies["total_pixels"] * 100.0
     ]
 
     # Figure size
@@ -131,8 +127,8 @@ def plotBarVegetationCombined(class_frequencies1: dict[str: float], class_freque
         class_frequencies2[os.environ.get("NDVI_MODERATE_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
         class_frequencies1[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
         class_frequencies2[os.environ.get("NDVI_SPARSE_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0,
-        (class_frequencies1[os.environ.get("NDVI_NO_VEGETATION")] + class_frequencies1[os.environ.get("NDVI_BARREN")]) / class_frequencies1["total_pixels"] * 100.0,
-        (class_frequencies2[os.environ.get("NDVI_NO_VEGETATION")] + class_frequencies2[os.environ.get("NDVI_BARREN")]) / class_frequencies2["total_pixels"] * 100.0
+        class_frequencies1[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies1["total_pixels"] * 100.0,
+        class_frequencies2[os.environ.get("NDVI_NO_VEGETATION")] / class_frequencies2["total_pixels"] * 100.0
     ]
 
     # Figure size

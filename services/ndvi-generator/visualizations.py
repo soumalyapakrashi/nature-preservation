@@ -2,6 +2,10 @@ import cv2
 import os
 import numpy as np
 
+# NOTE: The following method is not used anywhere. This is just a prototype. This feature will be
+# implemented in some later versions of the software. Please ignore this for documentation or
+# presentation purposes.
+
 def visualizeRGB(band_red_image: np.ndarray, band_green_image: np.ndarray, band_blue_image: np.ndarray, filename: str = "rgb.jpg") -> None:
     # Convert the input matrix to 32 bit float number.
     # This is because the tonemap function only works with float32 numbers.
@@ -29,6 +33,10 @@ def visualizeRGB(band_red_image: np.ndarray, band_green_image: np.ndarray, band_
     cv2.imwrite(filename, tonemapped_image)
 
 
+
+# NOTE: The following method is not used anywhere as it is not relevant to our project as of now.
+# This feature might be used in some later versions of the software. Please ignore this for
+# documentation or presentation purposes.
 
 # Function to visualize the NDVI image calculated.
 # Input is a numpy array of the NDVI image (values ranging between -1 and 1).
@@ -63,6 +71,8 @@ def visualizeNDVIContinuous(ndvi_image: np.ndarray) -> np.ndarray:
     return final_ndvi_image
 
 
+# This function produces a visualisation (image) of the NDVI matrix by assigning distinct
+# colors to each of the 4 categories of NDVI values defined in the .env file.
 def visualizeNDVICategorical(ndvi_image: np.ndarray) -> np.ndarray:
     
     band_blue_image = np.zeros(ndvi_image.shape, dtype = np.float32)
@@ -96,12 +106,14 @@ def visualizeNDVICategorical(ndvi_image: np.ndarray) -> np.ndarray:
                 band_red_image[row][column] = 223
                 band_green_image[row][column] = 194
                 band_blue_image[row][column] = 125
-            
-            # If barren, a dark brown colour is chosen
-            elif(ndvi_image[row][column] >= float(os.environ.get("NDVI_BARREN"))):
-                band_red_image[row][column] = 166
-                band_green_image[row][column] = 97
-                band_blue_image[row][column] = 26
+
+                # This is a dark brown colour which goes well with this color scheme.
+                # It is not required for this purpose as we are only interested with vegetation.
+                # But it has been kept here so that in the future, if a new class needs to be added
+                # which is on the negative NDVI scale, then this color can be used.
+                # band_red_image[row][column] = 166
+                # band_green_image[row][column] = 97
+                # band_blue_image[row][column] = 26      
 
     final_ndvi_image = cv2.merge([band_blue_image, band_green_image, band_red_image])
             

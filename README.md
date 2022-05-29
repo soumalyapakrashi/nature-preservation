@@ -174,9 +174,7 @@ Add the following environment variables:
 
 9. NDVI_SPARSE_VEGETATION - Set this to `0.1`.
 
-10. NDVI_NO_VEGETATION - Set this to `-0.25`.
-
-11. NDVI_BARREN - Set this to `-1.0`.
+10. NDVI_NO_VEGETATION - Set this to `-1.0`.
 
 
 ### Setup image-fetcher module

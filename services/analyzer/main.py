@@ -71,24 +71,24 @@ if(__name__ == "__main__"):
         vegetation_stats = generate_stats.calculateVegetationCover(ndvi)
 
         # Sparse vegetation cover
-        sparse_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_SPARSE_VEGETATION")] / vegetation_stats["total_pixels"] *100)
+        sparse_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_SPARSE_VEGETATION")] / vegetation_stats["total_pixels"] * 100)
         print(f"\nSparse Vegetation Cover: {sparse_vegetation_percent} %")
 
         # Moderate vegetation cover
-        moderate_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_MODERATE_VEGETATION")] / vegetation_stats["total_pixels"] *100)
+        moderate_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_MODERATE_VEGETATION")] / vegetation_stats["total_pixels"] * 100)
         print(f"Moderate Vegetation Cover: {moderate_vegetation_percent} %")
 
         # Thick vegetation cover
-        thick_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_THICK_VEGETATION")] / vegetation_stats["total_pixels"] *100)
+        thick_vegetation_percent = "{:.2f}".format(vegetation_stats[os.environ.get("NDVI_THICK_VEGETATION")] / vegetation_stats["total_pixels"] * 100)
         print(f"Thick Vegetation Cover: {thick_vegetation_percent} %")
 
         # Total vegetated area
-        total_vegetation = "{:.2f}".format((vegetation_stats[os.environ.get("NDVI_SPARSE_VEGETATION")] + vegetation_stats[os.environ.get("NDVI_MODERATE_VEGETATION")] + vegetation_stats[os.environ.get("NDVI_THICK_VEGETATION")]) / vegetation_stats["total_pixels"] *100)
+        total_vegetation = "{:.2f}".format((vegetation_stats[os.environ.get("NDVI_SPARSE_VEGETATION")] + vegetation_stats[os.environ.get("NDVI_MODERATE_VEGETATION")] + vegetation_stats[os.environ.get("NDVI_THICK_VEGETATION")]) / vegetation_stats["total_pixels"] * 100)
         print(f"\nVegetated Area: {total_vegetation} %")
 
         # Calculate land cover
         land_stats = generate_stats.calculateLandCover(ndvi)
-        no_vegetation_percent = "{:.2f}".format((land_stats[os.environ.get("NDVI_BARREN")] + land_stats[os.environ.get("NDVI_NO_VEGETATION")]) / land_stats["total_pixels"] *100)
+        no_vegetation_percent = "{:.2f}".format(land_stats[os.environ.get("NDVI_NO_VEGETATION")] / land_stats["total_pixels"] * 100)
         print(f"Non Vegetated Area: {no_vegetation_percent} %")
 
         # Print the bar chart
@@ -188,8 +188,9 @@ if(__name__ == "__main__"):
         land_stats_start = generate_stats.calculateLandCover(ndvi_start)
         land_stats_end = generate_stats.calculateLandCover(ndvi_end)
 
-        total_barren_start = land_stats_start[os.environ.get("NDVI_BARREN")] +land_stats_start[os.environ.get("NDVI_NO_VEGETATION")]
-        total_barren_end = land_stats_end[os.environ.get("NDVI_BARREN")] +land_stats_end[os.environ.get("NDVI_NO_VEGETATION")]
+        total_barren_start = land_stats_start[os.environ.get("NDVI_NO_VEGETATION")]
+        total_barren_end = land_stats_end[os.environ.get("NDVI_NO_VEGETATION")]
+        
         if(total_barren_start > total_barren_end):
             change_in_no_vegetation_cover = "{:.2f}".format((total_barren_start - total_barren_end) / total_barren_start *100)
             print(f"\nNon vegetated area has decreased by {change_in_no_vegetation_cover} %")
