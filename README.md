@@ -168,13 +168,15 @@ Add the following environment variables:
 
 6. NDVI_STORAGE_BASE_DIR - Set this to `{PROJECT_BASE_DIR}/storage/ndvi_data`.
 
-7. NDVI_THICK_VEGETATION - These are the set of variables which denote the levels how NDVI data is interpreted. This can be modified as required. Set this to `0.6`. It is interpreted as any NDVI value greater than or equal to 0.6, will be considered thick vegetation.
+7. SAT_STORAGE_BASE_DIR - Set this to `{PROJECT_BASE_DIR}/storage/satellite_data`.
 
-8. NDVI_MODERATE_VEGETATION - Set this to `0.4`. This can be interpreted as any NDVI value greater than or equal to 0.4 and less than 0.6 will be considered moderate vegetation. All other values are also interpreted similarly.
+8. NDVI_THICK_VEGETATION - These are the set of variables which denote the levels how NDVI data is interpreted. This can be modified as required. Set this to `0.6`. It is interpreted as any NDVI value greater than or equal to 0.6, will be considered thick vegetation.
 
-9. NDVI_SPARSE_VEGETATION - Set this to `0.1`.
+9. NDVI_MODERATE_VEGETATION - Set this to `0.4`. This can be interpreted as any NDVI value greater than or equal to 0.4 and less than 0.6 will be considered moderate vegetation. All other values are also interpreted similarly.
 
-10. NDVI_NO_VEGETATION - Set this to `-1.0`.
+10. NDVI_SPARSE_VEGETATION - Set this to `0.1`.
+
+11. NDVI_NO_VEGETATION - Set this to `-1.0`.
 
 
 ### Setup image-fetcher module
