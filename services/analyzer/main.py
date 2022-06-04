@@ -144,45 +144,47 @@ if(__name__ == "__main__"):
 
         # Calculate change vegetation cover for sparse vegetation
         if(vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")] > vegetation_stats_end[os.environ.get("NDVI_SPARSE_VEGETATION")]):
-            change_in_vegetation_cover = vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")] - vegetation_stats_end[os.environ.get("NDVI_SPARSE_VEGETATION")]
-            percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")] * 100)
-            print(f"\nSparse Vegetation Cover has decreased by {percent_change} %")
-        
+            deforestation_or_reforestation = "\nSparse Vegetation Cover has decreased by"
         else:
-            change_in_vegetation_cover = vegetation_stats_end[os.environ.get("NDVI_SPARSE_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")]
-            percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_end[os.environ.get("NDVI_SPARSE_VEGETATION")] * 100)
-            print(f"\nSparse Vegetation Cover has increased by {percent_change} %")
-            
+            deforestation_or_reforestation = "\nSparse Vegetation Cover has increased by"
+
+        change_in_vegetation_cover = abs(vegetation_stats_end[os.environ.get("NDVI_SPARSE_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")])
+        percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")] * 100)
+        
+        print(f"{deforestation_or_reforestation} {percent_change} %")
+
+                
         # Calculate change vegetation cover for moderate vegetation
         if(vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] > vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")]):
-            change_in_vegetation_cover = vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] - vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")]
-            percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] * 100)
-            print(f"Moderate Vegetation Cover has decreased by {percent_change} %")
-
+            deforestation_or_reforestation = "\nModerate Vegetation Cover has decreased by"
         else:
-            change_in_vegetation_cover = vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")]
-            percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")] * 100)
-            print(f"Moderate Vegetation Cover has increased by {percent_change} %")
+            deforestation_or_reforestation = "\nModerate Vegetation Cover has increased by"
+
+        change_in_vegetation_cover = abs(vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")])
+        percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] * 100)
+        
+        print(f"{deforestation_or_reforestation} {percent_change} %")
         
         # Calculate change vegetation cover for thick vegetation
         if(vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")] > vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")]):
-            change_in_vegetation_cover = vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")] - vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")]
-            percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")] * 100)
-            print(f"Thick Vegetation Cover has decreased by {percent_change} %")
+            deforestation_or_reforestation = "\nThick Vegetation Cover has decreased by"
         else:
-            change_in_vegetation_cover = vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")]
-            percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")] * 100)
-            print(f"Thick Vegetation Cover has increased by {percent_change} %")
-        
+            deforestation_or_reforestation = "\nThick Vegetation Cover has increased by"
+            
+        change_in_vegetation_cover = abs(vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")] - vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")])
+        percent_change = "{:.2f}".format(change_in_vegetation_cover / vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")] * 100)
+        print(f"{deforestation_or_reforestation} {percent_change} %")
+
         # Overall change in vegetation
         total_vegetation_start = vegetation_stats_start[os.environ.get("NDVI_SPARSE_VEGETATION")] + vegetation_stats_start[os.environ.get("NDVI_MODERATE_VEGETATION")] + vegetation_stats_start[os.environ.get("NDVI_THICK_VEGETATION")]
         total_vegetation_end = vegetation_stats_end[os.environ.get("NDVI_SPARSE_VEGETATION")] + vegetation_stats_end[os.environ.get("NDVI_MODERATE_VEGETATION")] + vegetation_stats_end[os.environ.get("NDVI_THICK_VEGETATION")]
         if(total_vegetation_start > total_vegetation_end):
-            rate_of_deforestation = "{:.2f}".format((total_vegetation_start - total_vegetation_end) / total_vegetation_start * 100)
-            print(f"\nTotal deforestation is {rate_of_deforestation} %")
+            deforestation_or_reforestation = "\nTotal deforestation is"
         else:
-            rate_of_reforestation = "{:.2f}".format((total_vegetation_end - total_vegetation_start) / total_vegetation_end * 100)
-            print(f"\nTotal reforestation is {rate_of_reforestation} %")
+            deforestation_or_reforestation = "\nTotal reforestation is"
+
+        change_in_total_cover = "{:.2f}".format(abs(total_vegetation_end - total_vegetation_start) / total_vegetation_start * 100)
+        print(f"{deforestation_or_reforestation} {change_in_total_cover} %")
         
         # Calculate land cover
         land_stats_start = generate_stats.calculateLandCover(ndvi_start)
@@ -192,16 +194,17 @@ if(__name__ == "__main__"):
         total_barren_end = land_stats_end[os.environ.get("NDVI_NO_VEGETATION")]
         
         if(total_barren_start > total_barren_end):
-            change_in_no_vegetation_cover = "{:.2f}".format((total_barren_start - total_barren_end) / total_barren_start *100)
-            print(f"\nNon vegetated area has decreased by {change_in_no_vegetation_cover} %")
+            land_cover = "\nNon vegetated area has decreased by"
         else:
-            change_in_no_vegetation_cover = "{:.2f}".format((total_barren_end - total_barren_start) / total_barren_end *100)
-            print(f"\nNon vegetated area has increased by {change_in_no_vegetation_cover} %")
+            land_cover = "\nNon vegetated area has increased by"
+
+        change_in_no_vegetation_cover = "{:.2f}".format(abs(total_barren_end - total_barren_start) / total_barren_start *100)
+        print(f"{land_cover} {change_in_no_vegetation_cover} %") 
 
         # Print the combined bar chart
         combined_stats_start = { **vegetation_stats_start, **land_stats_start }
         combined_stats_end = { **vegetation_stats_end, **land_stats_end }
-        generate_stats.plotBarVegetationCombined(combined_stats_start, combined_stats_end, [choice_of_years[choice_date1], choice_of_years[choice_date2]])
+        generate_stats.plotBarVegetationCombined(combined_stats_start, combined_stats_end, [choice_of_years[choice_date1-1], choice_of_years[choice_date2-1]])
 
 
     # Generate inference for future time
