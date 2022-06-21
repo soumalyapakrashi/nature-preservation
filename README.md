@@ -2,7 +2,9 @@
 
 ## Contents
 
-1. Setup
+1. [Overview](#overview)
+
+2. [Setup](#setup)
     1. [Setup Python and Virtualenv](#setup-python-and-virtualenv)
     2. [Setup XAMPP](#setup-xampp)
     3. [Setup GDAL](#setup-gdal)
@@ -14,12 +16,27 @@
     9. [Setup analyzer module](#setup-analyzer-module)
     10. [Setup database tables](#setup-database-tables)
 
-2. Usage
+3. [Architecture](#architecture)
+
+4. [Usage](#usage)
     1. [Obtaining Satellite Data](#obtaining-satellite-data)
     2. [Verify Database is Running](#verify-database-is-running)
     3. [Crop Image to Area of Interest](#crop-image-to-area-of-interest)
     4. [Generate NDVI Maps](#generate-ndvi-maps)
     5. [Analyze Areas of Interest](#analyze-areas-of-interest)
+
+5. [Sample Outputs](#sample-outputs)
+
+
+## Overview
+
+Deforestation have been a very prevalent problem of the time. Despite numerous attempts, it has been increasingly more difficult to track and eliminate the sources of deforestation. Although it is known to all, the importance of green forests, for people involved in deforestation activities, either they do not care about the consequences, or the alternatives to forest resources are not profitable enough to their businesses. Whatever be the reason, deforestation cannot be allowed to continue, or else, the effects can be devastating.
+
+With the introduction of Earth-Observing Satellites, monitoring land cover changes have become a lot more affordable. We have used Sentinel satellite images to check for land cover changes in this project. These satellites give a resolution of 10 meters and are good enough for monitoring purposes.
+
+We have gathered a number of image data for the area of interest over a period of time (say from 2016 to 2021), and have performed analysis on the data. This analysis include calculating NDVI (Normalized Difference Vegetation Index) and checking changes in vegetation cover and land cover at different points of time. We have also predicted the amount of deforestation that might happen in the upcoming year (2022 for example) based on the limited amount of previous data that is freely available.
+
+This project is made with the intention that more common people can be educated about the changes in Earth's land surfaces and also highlight these changes of concern to the concerned authorities (such as Environmental scientists and Government bodies) who might not have a formal background in Computer Science, but are in a position to take some action to actually reduce this deforestation as much as possible.
 
 
 ## Setup
@@ -263,6 +280,52 @@ Steps to perform to manually setup the database include:
 3. Create the two tables `AREAS` and `STORED_DATA_INFO` as given in [db_setup.sql](./services/database/db_setup.sql) in the *SQL Tab*.
 
 
+## Architecture
+
+The program is divided into a modular structure. An overview of the different modules and data-flow between them is as follows:
+
+```mermaid
+flowchart TB
+    A[Sentinel Hub]
+
+    subgraph dsu [Data-Store Unit]
+        direction TB
+        B[Storage]
+        C[SQL Database]
+    end
+
+    subgraph psu [Processing Unit]
+        direction TB
+        D[Image Fetcher]
+        E[Image Processor]
+        F[Image Analysis]
+    end
+
+    subgraph dev [Development]
+        direction TB
+        G[GitHub Repo]
+        H[Devs]
+    end
+
+    A --> |Earth Images| D
+    D --> |Earth Images| B
+    D --> |Gathered Image Data| C
+    B <--> |Earth Images| E
+    E --> |Processed Image Data| C
+    C --> |Processed Data| F
+    H --> |Trigger| D & E & F
+    H --> |Code| G
+```
+
+Firstly, the required data is downloaded from `Sentinel Hub` manually. Then the `Image Fetcher` module takes the important files from the image file (ZIP file) and stores them in a format which is recognizable by the program. These images are stored in the `Storage` which can be seen like a *Block Storage* device. Also, the path to these images and relevant information are stored in the `SQL Database`.
+
+Then the `Image Processor` obtains the Earth Images from `Storage` and calculates NDVI of them. It stores back the NDVI data and the images into the `Storage` and updates the `SQL Database` to reflect the changes and image file paths.
+
+Then the `Image Analysis` module takes the image data from `SQL Database` and images from `Storage` and calculates various statistics like land cover change, vegetation cover change, prediction of vegetation cover change in the upcoming year, etc.
+
+All the modules in the `Processing Unit` are triggered by `Devs` (Developers) manually and the code is also published in `GitHub`.
+
+
 ## Usage
 
 ### Obtaining Satellite Data
@@ -348,3 +411,58 @@ This command has been taken from this [StackOverflow](https://stackoverflow.com/
 Once NDVI has been calculated, different analysis tasks can be run on the data. Move to the `analysis` module (folder) and run the `main.py` file. This is an interactive program. Proceed accordingly and the output of the module will be printed to the terminal itself. Remember to activate the corresponding virtual environment before running this module.
 
 If performing inference on future data, then just executing the `main.py` file will not do. On running this, it will generate a CSV file in the same directory. After that, go to WSL terminal, activate the environment generated for linux, and run the `generate_inference.py` file. This will generate the remaining inference data.
+
+
+## Sample Outputs
+
+RGB representation of Gorumara area at February 2017.
+
+![Gorumara RGB 2017](./docs/images/gorumara_rgb_2017.jpg)
+
+The next image is an NDVI representation of the same area. Darker greens signify thicker forests while white areas signify sparse vegetation. Brown areas signify no vegetation.
+
+![Gorumara NDVI 2017](./docs/images/gorumara_ndvi_2017.jpg)
+
+Now we look at a RGB image of the same area but taken at February 2021.
+
+![Gorumara RGB 2021](./docs/images/gorumara_rgb_2021.jpg)
+
+Next is an NDVI image of the above image.
+
+![Gorumara NDVI 2021](./docs/images/gorumara_ndvi_2021.jpg)
+
+We can clearly see that the amount of thick vegetation has definitely decreased over the years.
+
+The statistics for Gorumara at February 2017:
+
+![Gorumara stats 2017](./docs/images/gorumara_analysis_2017.jpg)
+
+A bar chart for the same:
+
+![Gorumara bar 2017](./docs/images/gorumara_bar_2017.png)
+
+The statistics for Gorumara at February 2021:
+
+![Gorumara stats 2021](./docs/images/gorumara_analysis_2021.jpg)
+
+Similarly, a bar chart for better visualization:
+
+![Gorumara bar 2021](./docs/images/gorumara_bar_2021.png)
+
+Now we compare the changes between these 2 years. This will give us the amount of land cover change between February 2017 and February 2021. All percentage values are calculated based on the amount of the corresponding metric at the starting date (February 2017 in this case).
+
+![Gorumara change stats](./docs/images/gorumara_analysis_2017-2021.jpg)
+
+Again, a bar chart for easier visualization:
+
+![Gorumara change bar](./docs/images/gorumara_bar_2017-2021.png)
+
+Here, the *blue* bands represent data at February 2017 and *Orange* bands represent data at February 2021.
+
+Strangely, we can see that although the total vegetation cover has slightly increased, the amount of thick vegetation has decreased drastically and the amount of sparse vegetation has increased. In an area like Gorumara, which is a Reserved Forest, if more thick vegetation is turning into shrubs and grasslands, then this is definitely a concerning issue which needs to be taken care of.
+
+Lastly, we predict the amount of vegetation change that might happen in 2022.
+
+![Gorumara Prediction](./docs/images/gorumara_prediction.jpg)
+
+Here, we have calculated the rate of deforestation that have happened from December 2016 to December 2021, and also, the approximate amount of land which will be deforested by December 2022 when compared to that in December 2021.
